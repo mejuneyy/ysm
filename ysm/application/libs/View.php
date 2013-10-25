@@ -48,6 +48,7 @@ class Ysm_View{
 	 */
 	public function render(){
 		if(empty($this->_file)) die("You must set the file to use within your view before rendering");
+		if(!empty($this->_data))
 		$this->capture();
 	}
 	

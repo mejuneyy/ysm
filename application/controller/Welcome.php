@@ -13,10 +13,14 @@
  	//public $_auto_load = false;
  	
 	public function action_index($id = null){
+		echo DB::factory()->_prefix();
+		echo "<pre/>";
+		print_r(DB::factory()->query('select * from ysm_users')->fields_list('ysm_users'));
+		exit();
 		$array = array("a"=>"a","b"=>"b","c"=>"c");
 		$hello = "Hello world! 欢迎您看到这个全新的框架<br/>";
 		$config = Config::factory('view');
-		$config->set('default_template', 'y');
+		//$config->set('default_template', 'y');
 		$default_theme = $config->get('default_template');
 		$this->set('array', $array);
 		$this->set('hello', $hello);

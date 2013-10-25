@@ -6,7 +6,7 @@
 return array(
 	'default' => array
     (
-        'type'       => 'MySQL',
+        'type'       => 'MySql',
         'connection' => array(
             'hostname'   => 'localhost',
             'username'   => 'root',
@@ -19,7 +19,7 @@ return array(
     
     'other' => array
     (
-        'type'       => 'MySQL',
+        'type'       => 'MySql',
         'connection' => array(
             'hostname'   => 'localhost',
             'username'   => 'root',

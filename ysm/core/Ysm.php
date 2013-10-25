@@ -72,24 +72,44 @@ class Ysm {
 	 *
 	 */
 	private static function auto_load(){
-		//核心必须加载的类加载
-		$_lib_path = self::$_application.DIRECTORY_SEPARATOR.self::$_libs;
-		//核心类文件入队列
-		self::files($_lib_path, true);
-		//重写核心必须加载的类加载
-		$_cover_path = self::$_application.DIRECTORY_SEPARATOR.self::$_cover;
-		//重写核心类文件入队列
-		self::files($_cover_path, true);
-		//控制器类文件
-		$_controller_path = self::$_application.DIRECTORY_SEPARATOR.self::$_controller;
-		//控制器类文件入队列
-		self::files($_controller_path, true);
+		self::_must_load_in_turn();
 		//加载类文件
 		self::load(self::$_files);
+		//获取开启模块
+		$_open_module_list = Ysm_Config::factory('Module')->get('open_module');
+		//重置类文件列表
+		self::$_files = array();
+		//获取模块类列表
+		foreach ($_open_module_list as $module => $module_path){
+			self::_must_load_in_turn(self::$_module.DIRECTORY_SEPARATOR.$module_path.DIRECTORY_SEPARATOR);
+		}
+		//再次加载类文件
+		if(!empty(self::$_files)){
+			self::load(self::$_files);
+		}
 		//设置控制器视图
 		Ysm_Request::set_mvc();
 		//加载控制器
 		self::jump();
+	}
+	
+	/**
+	 * 必备的加载顺序
+	 *
+	 */
+	private static function _must_load_in_turn($module = null){
+		//核心必须加载的类加载
+		$_lib_path = $module.self::$_application.DIRECTORY_SEPARATOR.self::$_libs;
+		//核心类文件入队列
+		self::files($_lib_path, true);
+		//重写核心必须加载的类加载
+		$_cover_path = $module.self::$_application.DIRECTORY_SEPARATOR.self::$_cover;
+		//重写核心类文件入队列
+		self::files($_cover_path, true);
+		//控制器类文件
+		$_controller_path = $module.self::$_application.DIRECTORY_SEPARATOR.self::$_controller;
+		//控制器类文件入队列
+		self::files($_controller_path, true);
 	}
 	
 	/**
@@ -141,18 +161,21 @@ class Ysm {
 	 * @param string $file
 	 */
 	private static function _files( $path, $file = NULL){
-		//遍历文件
-		$_tmp_files = scandir($path);
-		//文件数
-		$_files_count = sizeof($_tmp_files);
-		for($i = 2; $i<$_files_count; $i++){
-			$__file_name = rtrim($_tmp_files[$i], EXT);
-			//如果指定文件名，则只文件名相同入队列，否则文件夹下所有文件入队列
-			if(!empty($file)){
-				if(ucwords($file) == $__file_name)
-				self::$_files[] = $path.DIRECTORY_SEPARATOR.$_tmp_files[$i];	
-			}else{
-				self::$_files[] = $path.DIRECTORY_SEPARATOR.$_tmp_files[$i];
+		if(is_dir($path)){
+			//遍历文件
+			$_tmp_files = scandir($path);
+			//文件数
+			$_files_count = sizeof($_tmp_files);
+			for($i = 2; $i<$_files_count; $i++){
+				$__file_name = rtrim($_tmp_files[$i], EXT);
+				//如果指定文件名，则只文件名相同入队列，否则文件夹下所有文件入队列
+				if(!empty($file)){
+					if(ucwords($file) == $__file_name && is_file($path.DIRECTORY_SEPARATOR.$_tmp_files[$i]))
+					self::$_files[] = $path.DIRECTORY_SEPARATOR.$_tmp_files[$i];	
+				}else{
+					if(is_file($path.DIRECTORY_SEPARATOR.$_tmp_files[$i]))
+					self::$_files[] = $path.DIRECTORY_SEPARATOR.$_tmp_files[$i];
+				}
 			}
 		}
 	}
