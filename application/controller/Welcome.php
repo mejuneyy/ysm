@@ -13,10 +13,13 @@
  	//public $_auto_load = false;
  	
 	public function action_index($id = null){
-		echo DB::factory()->_prefix();
-		echo "<pre/>";
-		print_r(DB::factory()->query('select * from ysm_users')->fields_list('ysm_users'));
-		exit();
+		$d = DM::factory('User');
+		$d->where('user_id','=','1')->where('email','=','aaa')->join('story');
+		echo DB::factory()->prefix();
+		$db = DB::factory();
+		//echo "<pre/>";
+		//print_r($db->fields_list('ysm_users'));
+		//exit();
 		$array = array("a"=>"a","b"=>"b","c"=>"c");
 		$hello = "Hello world! 欢迎您看到这个全新的框架<br/>";
 		$config = Config::factory('view');

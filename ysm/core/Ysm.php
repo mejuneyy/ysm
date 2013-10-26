@@ -28,9 +28,6 @@ class Ysm {
 	//控制器目录标识
 	public static $_controller = 'controller';
 	
-	//模型目录标识
-	public static $_model = 'model';
-	
 	//视图目录标识
 	public static $_view = 'view';
 	
@@ -51,6 +48,9 @@ class Ysm {
 
 	//files列表变量
 	private static $_files = array();
+	
+	//配置列表变量
+	private static $_load_array = array();
 
 	//构造函数
 	public function __construct(){
@@ -200,12 +200,18 @@ class Ysm {
 	 *
 	 * @param array $files
 	 */
-	public static function load_and_return( $files ){
-		if(is_array($files)){
-			return self::load_and_return($files[sizeof($files) - 1]);
+	public static function load_and_return( $file ){
+		if(is_array($file)){
+			foreach ($file as $f){
+				self::load_and_return($f);
+			}
 		}else{
-			return require $files;
+			$_array = require $file;
+			foreach ($_array as $_k => $_v){
+				self::$_load_array[$_k] = $_v;
+			}
 		}
+		return self::$_load_array;
 	}
 	
 	/**

@@ -76,7 +76,7 @@ class Ysm_DB{
 	 *
 	 * @return unknown
 	 */
-	public function _prefix(){
+	public function prefix(){
 		return $this->_db->_prefix();	
 	}
 	
@@ -137,5 +137,23 @@ class Ysm_DB{
 	 */
 	public function fields_list( $table ){
 		return $this->_db->_fields_list( $table );
+	}
+	
+	/**
+	 * 变量转义
+	 *
+	 * @param string $value
+	 */
+	public function escape( $value ){
+		return $this->_db->_escape( $value );
+	}
+	
+	/**
+	 * 获取主键
+	 * 
+	 * @param string $table
+	 */
+	public function primary_key( $table ){
+		return $this->_db->_primary_key( $table );
 	}
 }

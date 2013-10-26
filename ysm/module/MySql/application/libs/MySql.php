@@ -151,12 +151,36 @@ class Ysm_MySql {
 	 * 获取mysql 表字段
 	 */
 	public function _fields_list( $table ){
-		$this->_fields = array();
-		$fields_result = mysql_list_fields($this->_database, $table, $this->_db);
-		$columns = mysql_num_fields($fields_result);
-		for ($i = 0; $i < $columns; $i++) {
-		    $this->_fields[]  =  mysql_field_name($fields_result, $i);
-		} 
+		$db = DB::factory();
+		$this->_fields = DB::factory()->query('SHOW FULL COLUMNS FROM `'.$table.'`')->getall();
 		return $this->_fields;
+	}
+	
+	/**
+	 * 变量转义
+	 *
+	 * @param string $value
+	 */
+	public function _escape($value)
+	{
+		if (($value = mysql_real_escape_string( (string) trim($value), $this->_db)) === FALSE)
+		{
+			die('error sql query');
+		}
+		return "'$value'";
+	}
+	
+	/**
+	 * 获取主键
+	 * 
+	 * @param string $table
+	 */
+	public function _primary_key( $table ){
+		$fields = DB::factory()->fields_list( $table );
+		foreach ($fields as  $k => $field){
+			if( $field['Key'] == 'PRI' ){
+				return $field['Field'];
+			}
+		}
 	}
 }
